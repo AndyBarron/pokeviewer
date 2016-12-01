@@ -1,0 +1,31 @@
+body {
+  background-color: #101010;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #fff;
+}
+
+h1, h2 {
+  font-weight: normal;
+}
+
+h1 small, h2 small {
+  font-size: 50%;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th, td {
+  text-align: left;
+  padding: 2px;
+}
+
+progress {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+[right] {
+  text-align: right;
+}
