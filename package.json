@@ -11,6 +11,7 @@
     "start": "npm-run-all build serve"
   },
   "dependencies": {
+    "axios": "^0.15.3",
     "babel-core": "^6.0.0",
     "babel-preset-es2015": "^6.0.0",
     "babelify": "^7.2.0",
@@ -21,7 +22,6 @@
     "envify": "^3.4.1",
     "express": "^4.14.0",
     "npm-run-all": "^2.1.2",
-    "pokedex-promise-v2": "^3.0.1",
     "uglify-js": "^2.5.0",
     "vue": "^2.0.1",
     "vue-router": "^2.1.0",
