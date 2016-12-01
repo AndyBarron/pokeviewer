@@ -1,7 +1,7 @@
 <template>
   <tr>
     <th>{{ name }}</th>
-    <td right>{{ value }}</td>
+    <td text-right>{{ value }}</td>
     <td><stat-bar :value='value'></stat-bar></td>
   </tr>
 </template>

@@ -2,6 +2,8 @@ body {
   background-color: #101010;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #fff;
+  margin: 0;
+  padding: 0;
 }
 
 h1, h2 {
@@ -18,7 +20,12 @@ table {
 
 th, td {
   text-align: left;
-  padding: 2px;
+  vertical-align: top;
+  padding: 4px;
+}
+
+thead th {
+  border-bottom: 1px solid white;
 }
 
 progress {
@@ -26,6 +33,23 @@ progress {
   appearance: none;
 }
 
-[right] {
+[text-right] {
   text-align: right;
+}
+
+[text-loading] {
+  opacity: .5;
+  font-style: italic;
+}
+
+a:link {
+  color: cyan;
+}
+
+a:visited {
+  color: lightblue;
+}
+
+a:hover, a:active {
+  color: white;
 }

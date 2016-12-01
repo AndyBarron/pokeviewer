@@ -8,8 +8,7 @@
 <script>
 import PageTitle from '../mixins/PageTitle';
 import PokedexEntry from '../components/PokedexEntry.vue';
-import Pokedex from 'pokedex-promise-v2';
-import * as dex from '../pokedex';
+import dex from '../pokedex';
 
 const CACHE_SECONDS = 24 * 60 * 60; // one day
 
@@ -29,12 +28,23 @@ export default {
       return (this.info && this.info.name) || '';
     },
   },
+  methods: {
+    fetchInfo_: function(id) {
+      dex.getPokemonByName(id.toLowerCase()).then((info) => {
+        this.info = info;
+        window.info = info;
+      });
+    },
+  },
   mounted () {
     const id = this.$route.params.id;
-    dex.getPokemonByName(id).then((info) => {
-      this.info = info;
-      window.info = info;
-    });
-  }
+    this.fetchInfo_(id);
+  },
+  watch: {
+    '$route' ($route) {
+      const id = $route.params.id;
+      this.fetchInfo_(id);
+    }
+  },
 }
 </script>
