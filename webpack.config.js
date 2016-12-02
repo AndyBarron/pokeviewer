@@ -1,5 +1,6 @@
-var path = require('path')
-var webpack = require('webpack')
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const path = require('path');
+const webpack = require('webpack');
 
 const INCLUDE_PATHS = [path.resolve(__dirname, 'src')];
 
@@ -10,6 +11,9 @@ module.exports = {
     publicPath: '/dist/',
     filename: 'build.js'
   },
+  plugins: [
+    new ExtractTextPlugin('style.css'),
+  ],
   module: {
     rules: [
       {
@@ -17,7 +21,13 @@ module.exports = {
         loader: 'vue-loader',
         options: {
           // vue-loader options go here
-        }
+          loaders: {
+            css: ExtractTextPlugin.extract({
+              loader: 'css-loader',
+              fallbackLoader: 'vue-style-loader', // included as dep of vue-loader
+            }),
+          },
+        },
       },
       {
         test: /\.js$/,
@@ -28,16 +38,16 @@ module.exports = {
         test: /\.(png|jpg|gif|svg)$/,
         loader: 'file-loader',
         options: {
-          name: '[name].[ext]?[hash]'
-        }
-      }
-    ]
+          name: '[name].[ext]?[hash]',
+        },
+      },
+    ],
   },
   devServer: {
     historyApiFallback: true,
-    noInfo: true
+    noInfo: true,
   },
-  devtool: '#eval-source-map'
+  devtool: '#eval-source-map',
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -50,6 +60,7 @@ if (process.env.NODE_ENV === 'production') {
       }
     }),
     new webpack.optimize.UglifyJsPlugin({
+      comments: () => false,
       sourceMap: true,
       compress: {
         warnings: false
