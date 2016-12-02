@@ -13,9 +13,22 @@ module.exports = {
   },
   plugins: [
     new ExtractTextPlugin('style.css'),
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        eslint: {
+          fix: true,
+        },
+      }
+    }),
   ],
   module: {
     rules: [
+      {
+        test: /\.(vue|js)$/,
+        loader: 'eslint-loader',
+        enforce: 'pre',
+        include: INCLUDE_PATHS,
+      },
       {
         test: /\.vue$/,
         loader: 'vue-loader',
