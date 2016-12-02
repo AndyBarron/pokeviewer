@@ -1,0 +1,36 @@
+<template>
+  <div outer>
+    <div inner :style='innerStyle'>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+  [outer] {
+    background-color: #334;
+    display: inline-block;
+    height: 100%;
+    width: 300px;
+  }
+  [inner] {
+    height: 100%;
+  }
+</style>
+
+<script>
+  import chroma from 'chroma-js';
+  const COLORS = ['#700', '#fe0', '#0f0', '#0ff'];
+  const scale = chroma.scale(COLORS);
+  export default {
+    props: ['value'],
+    computed: {
+      innerStyle() {
+        const percent = this.value / 255;
+        return {
+          width: String(100 * percent) + '%',
+          background: scale(percent).hex(),
+        }
+      },
+    }
+  };
+</script>
