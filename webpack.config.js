@@ -4,7 +4,7 @@ const webpack = require('webpack');
 
 const INCLUDE_PATHS = [path.resolve(__dirname, 'src')];
 
-module.exports = {
+const config = {
   entry: ['core-js/shim', './src/node_modules/main.js'],
   output: {
     path: path.resolve(__dirname, './dist'),
@@ -13,22 +13,9 @@ module.exports = {
   },
   plugins: [
     new ExtractTextPlugin('style.css'),
-    new webpack.LoaderOptionsPlugin({
-      options: {
-        eslint: {
-          fix: true,
-        },
-      }
-    }),
   ],
   module: {
     rules: [
-      {
-        test: /\.(vue|js)$/,
-        loader: 'eslint-loader',
-        enforce: 'pre',
-        include: INCLUDE_PATHS,
-      },
       {
         test: /\.vue$/,
         loader: 'vue-loader',
@@ -61,12 +48,12 @@ module.exports = {
     noInfo: true,
   },
   devtool: '#eval-source-map',
-}
+};
 
 if (process.env.NODE_ENV === 'production') {
-  module.exports.devtool = '#source-map'
+  config.devtool = '#source-map'
   // http://vue-loader.vuejs.org/en/workflow/production.html
-  module.exports.plugins = (module.exports.plugins || []).concat([
+  config.plugins = (config.plugins || []).concat([
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: '"production"'
@@ -83,4 +70,20 @@ if (process.env.NODE_ENV === 'production') {
       minimize: true
     })
   ])
+} else {
+  config.plugins.push(new webpack.LoaderOptionsPlugin({
+    options: {
+      eslint: {
+        fix: true,
+      },
+    }
+  }));
+  config.module.rules.unshift({
+    test: /\.(vue|js)$/,
+    loader: 'eslint-loader',
+    enforce: 'pre',
+    include: INCLUDE_PATHS,
+  });
 }
+
+module.exports = config;
