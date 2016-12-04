@@ -1,18 +1,41 @@
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
 
-const INCLUDE_PATHS = [path.resolve(__dirname, 'src')];
+const APP_ROOT = __dirname;
+const INCLUDE_PATHS = [path.resolve(APP_ROOT, 'src')];
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const IS_DEVELOPMENT = !IS_PRODUCTION;
+
+const vueLoaders = {};
 
 const config = {
+  context: APP_ROOT,
   entry: ['core-js/shim', './src/node_modules/main.js'],
   output: {
-    path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/',
-    filename: 'build.js'
+    path: path.resolve(APP_ROOT, 'dist'),
+    publicPath: '/',
+    filename: 'app.js'
   },
   plugins: [
-    new ExtractTextPlugin('style.css'),
+    new CleanWebpackPlugin(['dist'], {
+      root: APP_ROOT,
+      verbose: false,
+    }),
+    new CopyWebpackPlugin([
+      {from: 'static'},
+    ]),
+    new HtmlWebpackPlugin({
+      inject: true,
+      title: 'PokéViewer',
+      hash: true,
+      minify: {
+        collapseWhitespace: IS_PRODUCTION,
+      },
+    }),
   ],
   module: {
     rules: [
@@ -20,13 +43,7 @@ const config = {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
-          // vue-loader options go here
-          loaders: {
-            css: ExtractTextPlugin.extract({
-              loader: 'css-loader',
-              fallbackLoader: 'vue-style-loader', // included as dep of vue-loader
-            }),
-          },
+          loaders: vueLoaders,
         },
       },
       {
@@ -38,7 +55,8 @@ const config = {
         test: /\.(png|jpg|gif|svg)$/,
         loader: 'file-loader',
         options: {
-          name: '[name].[ext]?[hash]',
+          context: path.resolve(APP_ROOT, 'src/node_modules'),
+          name: '[path][name].[ext]?[hash-5]',
         },
       },
     ],
@@ -47,13 +65,11 @@ const config = {
     historyApiFallback: true,
     noInfo: true,
   },
-  devtool: '#eval-source-map',
+  devtool: IS_DEVELOPMENT ? '#eval-source-map' : '#source-map',
 };
 
-if (process.env.NODE_ENV === 'production') {
-  config.devtool = '#source-map'
-  // http://vue-loader.vuejs.org/en/workflow/production.html
-  config.plugins = (config.plugins || []).concat([
+if (IS_PRODUCTION) {
+  const prodPlugins = [
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: '"production"'
@@ -68,16 +84,28 @@ if (process.env.NODE_ENV === 'production') {
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true
-    })
-  ])
+    }),
+    new ExtractTextPlugin('app.css'),
+  ];
+  config.plugins = (config.plugins || []).concat(prodPlugins);
+  vueLoaders.css = ExtractTextPlugin.extract({
+    loader: 'css-loader',
+    fallbackLoader: 'vue-style-loader', // included as dep of vue-loader
+  });
 } else {
-  config.plugins.push(new webpack.LoaderOptionsPlugin({
-    options: {
-      eslint: {
-        fix: true,
-      },
-    }
-  }));
+  const devPlugins = [
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        // Fixes weird "path must be a string" error w/o CSS extraction
+        context: APP_ROOT,
+        eslint: {
+          fix: true,
+        },
+      }
+    }),
+    new webpack.NamedModulesPlugin(),
+  ];
+  config.plugins = (config.plugins || []).concat(devPlugins);
   config.module.rules.unshift({
     test: /\.(vue|js)$/,
     loader: 'eslint-loader',
