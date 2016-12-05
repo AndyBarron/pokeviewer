@@ -18,6 +18,7 @@ const config = {
   output: {
     path: path.resolve(APP_ROOT, 'dist'),
     publicPath: '/',
+    sourceMapFilename: 'source-maps-[hash]/[file].map',
     filename: 'app.js'
   },
   plugins: [
@@ -28,6 +29,7 @@ const config = {
     new CopyWebpackPlugin([
       {from: 'static'},
     ]),
+    new webpack.optimize.OccurrenceOrderPlugin(true),
     new HtmlWebpackPlugin({
       inject: true,
       title: 'PokéViewer',
