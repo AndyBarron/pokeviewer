@@ -1,6 +1,7 @@
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
@@ -26,9 +27,31 @@ const config = {
       root: APP_ROOT,
       verbose: false,
     }),
-    new CopyWebpackPlugin([
-      {from: 'static'},
-    ]),
+    new CopyWebpackPlugin(
+      [{ from: 'static' }],
+      { ignore: ['.*'] }
+    ),
+    new FaviconsWebpackPlugin({
+      logo: path.resolve(APP_ROOT, 'res/favicon.png'),
+      inject: true,
+      prefix: 'icons-[hash]/',
+      emitStats: false,
+      persistentCache: true,
+      background: '#fff',
+      title: 'PokéViewer',
+      icons: {
+        android: true,
+        appleIcon: true,
+        appleStartup: false,
+        coast: false,
+        favicons: true,
+        firefox: true,
+        opengraph: false,
+        twitter: true,
+        yandex: false,
+        windows: true,
+      },
+    }),
     new webpack.optimize.OccurrenceOrderPlugin(true),
     new HtmlWebpackPlugin({
       inject: true,
