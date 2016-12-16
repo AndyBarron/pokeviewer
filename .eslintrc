@@ -1,5 +1,8 @@
 {
   "extends": "vue",
+  "parserOptions": {
+    "ecmaVersion": 2017
+  },
   "rules": {
     "comma-dangle": ["error", "always-multiline"],
     "semi": ["error", "always"],

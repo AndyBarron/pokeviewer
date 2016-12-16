@@ -15,7 +15,7 @@ const vueLoaders = {};
 
 const config = {
   context: APP_ROOT,
-  entry: ['core-js/shim', './src/node_modules/main.js'],
+  entry: ['babel-polyfill', './src/node_modules/main.js'],
   output: {
     path: path.resolve(APP_ROOT, 'dist'),
     publicPath: '/',
